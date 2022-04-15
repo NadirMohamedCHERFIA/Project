@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "WiFi.h"
 #include "PubSubClient.h"
+#include <HTTPClient.h>
 #include "Adafruit_PM25AQI.h"
 #include <Adafruit_Sensor.h>
 #include "DFRobot_CCS811.h"
@@ -70,7 +71,7 @@ TwoWire PMA003i = TwoWire(1);
 /******************WIFI & MQTT Broker info**************************/
 const char* ssid = "DJAWEB_Pepsi";
 const char* password = "google012345";
-const char* mqttServer = "192.168.1.4";
+const char* mqttServer = "192.168.1.3";
 const int mqttPort = 1883;
 const char* mqttUser = "iot_enst";
 const char* mqttPassword = "cherfianadir";
@@ -78,6 +79,11 @@ const char* mqttPassword = "cherfianadir";
 WiFiClient espClient;
 PubSubClient client(espClient);
 /******************************************************************/
+
+/***********HTTP***************************************************/
+String HOST_NAME ="http://localhost"; // change to your PC's IP
+String PATH_NAME   = "/insert.php";
+/*******************************************************************/
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -194,6 +200,7 @@ bme.setGasHeater(320, 150); // 320*C for 150 ms
 
 /******************************************************************/
 }
+
 void loop() {
     if (!client.connected()) {
       digitalWrite(LED_ORANGE_MQTT_ESTABLISHING_CONNECTION,HIGH);
@@ -389,7 +396,30 @@ Serial.println(F("---------------------------------------"));
   delay(500);
   client.publish("esp/MQ135/air_quality",str_air_quality);
   delay(500);
-
+  /****************HTTP**********(to be completed)*****************************/
+  HTTPClient http;
+  char queryString [100];
+  sprintf(queryString,"?temperature=%s",str_temperature,"&humidity=%s",str_humidity,"&pressure=%s",str_pressure,
+  "&altitude=%s",str_altitude,"&PM10=%s",str_PM10,"&PM25=%s",str_PM25,"&PM100=%s",str_PM100,
+  "&P03um=%s",str_03um,"&P05um=%s",str_05um,"&P10um=%s",str_10um,"&P25um=%s",str_25um,"&P50um=%s",str_50um,
+  "&P100um=%s",str_100um,"&CO2=%s",str_CO2,"&TVOC=%s",str_TVOC,"&AIR_QUALITY=%s",str_air_quality,"&GAS_RESISTANCE=%s",str_gas_resistance);
+  http.begin(HOST_NAME + PATH_NAME + queryString); //HTTP
+  int httpCode = http.GET();
+    // httpCode will be negative on error
+  if(httpCode > 0) {
+    // file found at server
+    if(httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      Serial.println(payload);
+    } else {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+  http.end();
+/*********************************************************/
    }
       client.loop();
 digitalWrite(LED_GREEN_DATA_SENT_SUCCESSFULLY,HIGH);

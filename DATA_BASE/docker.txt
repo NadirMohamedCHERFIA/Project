@@ -1,0 +1,4 @@
+1-
+curl -sSl https://get.docker.com | sh
+2-To run docker with root previleges:
+sudo usermod -aG docker <usernam>
