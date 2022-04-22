@@ -1,6 +1,8 @@
 /*including all the libraries we need to work with*/
 #include "Arduino.h"
+#include "string.h"
 #include "WiFi.h"
+#include"WiFiClient.h"
 #include "PubSubClient.h"
 #include <HTTPClient.h>
 #include "Adafruit_PM25AQI.h"
@@ -9,7 +11,8 @@
 #include "Adafruit_BME680.h"
 #include "MQ135.h"
 #include "SPI.h"
-
+#include <ctime>
+#include <iostream>
 
 /*Defining pins to use */
 
@@ -60,8 +63,6 @@ pinsout schema)                                              */
 
 
 /*-------------------------------------------------------------------*/
-#define VARIABLE_LABEL1 "PMA003i"
-#define DEVICE_LABEL "esp32" // Assig the device label
 long lastMsg = 0;
 /*-------------------------------------------------------------------*/
 //Create a new TwoWire instance. In this case, it’s called PMA003i. This simply creates an I2C bus.
@@ -71,7 +72,7 @@ TwoWire PMA003i = TwoWire(1);
 /******************WIFI & MQTT Broker info**************************/
 const char* ssid = "DJAWEB_Pepsi";
 const char* password = "google012345";
-const char* mqttServer = "192.168.1.3";
+const char* mqttServer = "192.168.1.16";
 const int mqttPort = 1883;
 const char* mqttUser = "iot_enst";
 const char* mqttPassword = "cherfianadir";
@@ -81,8 +82,8 @@ PubSubClient client(espClient);
 /******************************************************************/
 
 /***********HTTP***************************************************/
-String HOST_NAME ="http://localhost"; // change to your PC's IP
-String PATH_NAME   = "/insert.php";
+String HOST_NAME ="http://192.168.1.5:3000"; // change to PC's IP
+String PATH_NAME   = "/insert";
 /*******************************************************************/
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
@@ -328,23 +329,23 @@ Serial.println(F("---------------------------------------"));
    long now = millis();
    if (now - lastMsg > 5000) {
      lastMsg=now; 
-  char str_PM100[10];
-  char str_PM25[10];
-  char str_PM10[10];
-  char str_03um[10];
-  char str_05um[10];
-  char str_10um[10];
-  char str_25um[10];
-  char str_50um[10];
-  char str_100um[10];
-  char str_temperature[10];
-  char str_humidity[10];
-  char str_pressure[10];
-  char str_altitude[10];
-  char str_gas_resistance[10];
-  char str_TVOC[10];
-  char str_CO2[10];
-  char str_air_quality[10];
+  char str_PM100[20];
+  char str_PM25[20];
+  char str_PM10[20];
+  char str_03um[20];
+  char str_05um[20];
+  char str_10um[20];
+  char str_25um[20];
+  char str_50um[20];
+  char str_100um[20];
+  char str_temperature[20];
+  char str_humidity[20];
+  char str_pressure[20];
+  char str_altitude[20];
+  char str_gas_resistance[20];
+  char str_TVOC[20];
+  char str_CO2[20];
+  char str_air_quality[20];
   dtostrf(data.pm100_standard, 1, 2,str_PM100);
   dtostrf(data.pm25_standard, 1, 2,str_PM25);
   dtostrf(data.pm10_standard, 1, 2,str_PM10);
@@ -397,13 +398,20 @@ Serial.println(F("---------------------------------------"));
   client.publish("esp/MQ135/air_quality",str_air_quality);
   delay(500);
   /****************HTTP**********(to be completed)*****************************/
+
   HTTPClient http;
-  char queryString [100];
-  sprintf(queryString,"?temperature=%s",str_temperature,"&humidity=%s",str_humidity,"&pressure=%s",str_pressure,
-  "&altitude=%s",str_altitude,"&PM10=%s",str_PM10,"&PM25=%s",str_PM25,"&PM100=%s",str_PM100,
-  "&P03um=%s",str_03um,"&P05um=%s",str_05um,"&P10um=%s",str_10um,"&P25um=%s",str_25um,"&P50um=%s",str_50um,
-  "&P100um=%s",str_100um,"&CO2=%s",str_CO2,"&TVOC=%s",str_TVOC,"&AIR_QUALITY=%s",str_air_quality,"&GAS_RESISTANCE=%s",str_gas_resistance);
-  http.begin(HOST_NAME + PATH_NAME + queryString); //HTTP
+  WiFiClient client;
+  time_t now = time(0);
+  tm *ltm = localtime(&now);
+  int year=(ltm->tm_year);
+  int month=(ltm->tm_mon)+1;
+  int day=(ltm->tm_mday);
+  int hour=(ltm->tm_hour)+5;
+  String serverPath=HOST_NAME+PATH_NAME+"?temperature="+str_temperature+"&humidity="+str_humidity+"&altitude="+str_altitude+"&pressure="+str_pressure+
+  "&PM10="+str_PM10+"&PM25="+str_PM25+"&PM100="+str_PM100+"&P03um="+str_03um+"&P05um="+str_05um+"&P10um="+str_10um+"&P25um="+str_25um+
+  "&P50um="+str_50um+"&P100um="+str_100um+"&CO2="+str_CO2+"&TVOC="+str_TVOC+"&AIR_QUALITY="+str_air_quality+"&GAS_RESISTANCE="+str_gas_resistance;
+  
+  http.begin(client,serverPath.c_str()); //HTTP
   int httpCode = http.GET();
     // httpCode will be negative on error
   if(httpCode > 0) {
