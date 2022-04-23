@@ -1,9 +1,9 @@
 const express=require('express');
 const mysql=require('mysql');
 const cors=require('cors');
-//Create connection 
-/*const db=mysql.createConnection({
-    host:"localhost",
+///Create connection 
+const db=mysql.createConnection({
+    host:"192.168.32.2",
     user:'root',
     password:'Cherfianadir2022@',
     database: 'iot_air_quality'
@@ -14,7 +14,7 @@ db.connect((err)=>{
         throw err;
     }
     console.log('mysql connected ....');
-});*/
+});
 const app = express();
 app.use(cors({
     origin:'*',
@@ -39,7 +39,7 @@ app.get('/createtable',(req,res)=>{
 });
 //welcome route
 app.get('/',(req,res)=>{
-    res.send('<h1>WELCOME TO YOUR DOCKER!</h1>')
+    res.send('<h1>!WELCOME TO YOUR DOCKER!</h1>')
 });
 //inert data
 app.get('/insert',(req,res)=>{

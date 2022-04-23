@@ -6,3 +6,12 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
+  database:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Cherfianadir2022@
+    volumes:
+      - mysql-db:/var/lib/mysql
+
+volumes:
+  mysql-db:
