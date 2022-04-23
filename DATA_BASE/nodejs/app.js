@@ -1,21 +1,27 @@
 const express=require('express');
-const mysql=require('mysql');
+const mysql=require('mysql2');
 const cors=require('cors');
+
+const connectWithREtry = () =>{
 ///Create connection 
 const db=mysql.createConnection({
-    host:"192.168.1.5",
+    host:"database",
     user:'root',
     password:'Cherfianadir2022@',
-    database: 'iot_air_quality',
-    insecureAuth : true
+    database: 'iot_air_quality'
 });
 //connect
 db.connect((err)=>{
     if(err){
         throw err;
+        setTimeout(connectWithREtry,5000)
     }
     console.log('mysql connected ....');
 });
+}
+
+connectWithREtry();
+
 const app = express();
 app.use(cors({
     origin:'*',
@@ -40,7 +46,7 @@ app.get('/createtable',(req,res)=>{
 });
 //welcome route
 app.get('/',(req,res)=>{
-    res.send('<h1>!WELCOME TO YOUR DOCKER!</h1>')
+    res.send('<h1>!WELCOME TO YOUR DOCKER!!</h1>')
 });
 //inert data
 app.get('/insert',(req,res)=>{
