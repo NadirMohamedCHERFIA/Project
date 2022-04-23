@@ -39,7 +39,7 @@ app.get('/createtable',(req,res)=>{
 });
 //welcome route
 app.get('/',(req,res)=>{
-    res.send('<h1>WELCOME TO YOUR DOCKER</h1>')
+    res.send('<h1>WELCOME TO YOUR DOCKER!</h1>')
 });
 //inert data
 app.get('/insert',(req,res)=>{
