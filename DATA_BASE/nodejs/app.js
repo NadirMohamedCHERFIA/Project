@@ -2,7 +2,7 @@ const express=require('express');
 const mysql=require('mysql');
 const cors=require('cors');
 //Create connection 
-const db=mysql.createConnection({
+/*const db=mysql.createConnection({
     host:"localhost",
     user:'root',
     password:'Cherfianadir2022@',
@@ -14,10 +14,8 @@ db.connect((err)=>{
         throw err;
     }
     console.log('mysql connected ....');
-});
+});*/
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded());
 app.use(cors({
     origin:'*',
 }));
@@ -39,7 +37,10 @@ app.get('/createtable',(req,res)=>{
         res.send("Tablecreated.....");
     });
 });
-
+//welcome route
+app.get('/',(req,res)=>{
+    res.send('<h1>WELCOME TO YOUR DOCKER</h1>')
+});
 //inert data
 app.get('/insert',(req,res)=>{
     //res.setHeader("Acces-Control-Allow-Origin","*");

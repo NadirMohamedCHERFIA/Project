@@ -2,3 +2,10 @@
 curl -sSl https://get.docker.com | sh
 2-To run docker with root previleges:
 sudo usermod -aG docker <usernam>
+/-----------------------------------------/
+docker build -t node_docker_iot .
+docker images
+docker run -p 3000:3000 -d(detachedmod) --name node-app (container name) node_docker_iot//creating container
+docker ps // docker processus
+
+
