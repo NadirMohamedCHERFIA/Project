@@ -3,10 +3,11 @@ const mysql=require('mysql');
 const cors=require('cors');
 ///Create connection 
 const db=mysql.createConnection({
-    host:"192.168.32.2",
+    host:"192.168.1.5",
     user:'root',
     password:'Cherfianadir2022@',
-    database: 'iot_air_quality'
+    database: 'iot_air_quality',
+    insecureAuth : true
 });
 //connect
 db.connect((err)=>{
