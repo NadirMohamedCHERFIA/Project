@@ -5,7 +5,11 @@ sudo usermod -aG docker <usernam>
 /-----------------------------------------/
 docker build -t node_docker_iot .
 docker images
-docker run -p 3000:3000 -d(detachedmod) --name node-app (container name) node_docker_iot//creating container
+docker run -v $(pwd):/app:ro -v /app/node_modules -p 3000:3000 --env-file ./.env -d(detachedmod) --name node-app (container name) node_docker_iot//creating container
 docker ps // docker processus
+--to remove and stop a container --
+docker rm <name/id> -f
+--remove bind volumes for previous runs--
+docker volume prune
 
 
