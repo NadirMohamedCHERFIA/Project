@@ -11,8 +11,6 @@
 #include "Adafruit_BME680.h"
 #include "MQ135.h"
 #include "SPI.h"
-#include <ctime>
-#include <iostream>
 
 /*Defining pins to use */
 
@@ -401,12 +399,7 @@ Serial.println(F("---------------------------------------"));
 
   HTTPClient http;
   WiFiClient client;
-  time_t now = time(0);
-  tm *ltm = localtime(&now);
-  int year=(ltm->tm_year);
-  int month=(ltm->tm_mon)+1;
-  int day=(ltm->tm_mday);
-  int hour=(ltm->tm_hour)+5;
+
   String serverPath=HOST_NAME+PATH_NAME+"?temperature="+str_temperature+"&humidity="+str_humidity+"&altitude="+str_altitude+"&pressure="+str_pressure+
   "&PM10="+str_PM10+"&PM25="+str_PM25+"&PM100="+str_PM100+"&P03um="+str_03um+"&P05um="+str_05um+"&P10um="+str_10um+"&P25um="+str_25um+
   "&P50um="+str_50um+"&P100um="+str_100um+"&CO2="+str_CO2+"&TVOC="+str_TVOC+"&AIR_QUALITY="+str_air_quality+"&GAS_RESISTANCE="+str_gas_resistance;

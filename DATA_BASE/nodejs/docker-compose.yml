@@ -10,13 +10,17 @@ services:
       - database
   database:
     image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=Cherfianadir2022@
-      - MYSQL_DATABASE=iot_air_quality
+      - MYSQL_ROOT_PASSWORD=cherfianadir
     volumes:
-      - mysql-db:/var/lib/mysql
+      - mysql-db=/data/db
+  mqtt:
+    image: mjenz/rpi-mosquitto
+    environment:
+      - PORT=1883
+      - MYSQL_USER=iot_enst
+      - MYSQL_PASSWORD=cherfianadir
+    
 
 
 volumes:
