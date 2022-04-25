@@ -21,7 +21,5 @@ services:
       - MYSQL_USER=iot_enst
       - MYSQL_PASSWORD=cherfianadir
     
-
-
 volumes:
   mysql-db:
